@@ -4,8 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .wrap {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+        }
+        .todoLi {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 300px;
+            margin-bottom: 5px;
+        }
+        .del {
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <div>test code</div>
+    <div class="wrap">
+        <h1>To Do List</h1>
+        <input class="todo-input" type="text" placeholder="todo 입력">
+        <ul class="todo-list">
+            
+        </ul>
+    </div>
+    <script src="{{ url_for('static', filename='todo.js') }}"></script>
 </body>
 </html>
