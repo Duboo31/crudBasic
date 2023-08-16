@@ -5,6 +5,7 @@ app = Flask(__name__)
 client = MongoClient(
     'mongodb+srv://sparta:test@cluster0.svk42ds.mongodb.net/?retryWrites=true&w=majority')
 db = client.dbToDo
+todos = db.toDo
 
 # index.html 연결 코드
 @app.route('/')
@@ -19,14 +20,14 @@ def toDo_create():
     doc = {
         'todo': todo_receive,
     }
-    db.toDo.insert_one(doc)
+    todos.insert_one(doc)
     print('post toDo 저장', doc)
     return jsonify({'msg': 'app.py > post 요청 create'})
 
 # 읽기 get 요청
 @app.route("/readToDo", methods=["GET"])
 def toDo_get():
-    all_todo = db.toDo.find({})
+    all_todo = list(todos.find({},{'_id':False}))
 
     return jsonify({'msg': all_todo})
 
@@ -34,17 +35,16 @@ def toDo_get():
 @app.route('/deleteTodo', methods=['DELETE'])
 def toDo_delete():
     todo_receive = request.form['todo_give']
-    db.toDo.delete_one({'todo': todo_receive})
+    todos.delete_one({'todo': todo_receive})
     return jsonify({'msg': 'app.py > delete 요청'})
 
 # 수정 post 요청
 @app.route('/updateToDo', methods=['POST'])
 def toDo_update():
+    currentToDo_receive = request.form['current_todo']
     todo_receive = request.form['todo_change']
-    id = '64d9dbec6676cf440c289891'
-    objInstance = ObjectId(id)
 
-    db.toDo.update_one({'_id': objInstance},{'$set':{'todo': todo_receive}})
+    todos.update_one({'todo': currentToDo_receive},{'$set':{'todo': todo_receive}})
     return jsonify({'msg': 'app.py > post 요청 update'})
 
 if __name__ == '__main__':

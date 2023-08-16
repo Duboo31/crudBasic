@@ -1,15 +1,23 @@
 const toDoInput = document.querySelector(".todo-input");
+const updateInput = document.querySelector(".update-input");
 const toDoList = document.querySelector(".todo-list");
 
 // 모든 투두 가져오는 함수
 const printAllToDo = () => {
-  console.log('printAllToDo 함수 실행 ㅇㅋ')
-  fetch("/readToDo")
-    .then((res) => res.json())
+  console.log("printAllToDo 함수 실행");
+  const rUrl = "/readToDo";
+  fetch(rUrl)
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(
+          `This is an HTTP error: The status is ${response.status}`
+        );
+      }
+      return res.json();
+    })
     .then((data) => {
-      console.log('data??: ', data)
-
       let toDos = data.msg;
+      console.log(data);
 
       toDos.forEach((todo) => {
         const todoLi = document.createElement("li");
@@ -20,7 +28,7 @@ const printAllToDo = () => {
         delSpan.classList.add("del");
 
         const updateDiv = document.createElement("div");
-        updateDiv.addEventListener('click', updateToDo);
+        updateDiv.addEventListener("click", updateToDo);
 
         const todoSpan = document.createElement("span");
 
@@ -34,6 +42,9 @@ const printAllToDo = () => {
 
         toDoList.append(todoLi);
       });
+    })
+    .catch((err) => {
+      console.log(err.message);
     });
 };
 
@@ -69,17 +80,28 @@ const deleteToDoFn = (e) => {
 
 // 투두 수정 함수
 const updateToDo = (e) => {
-  let updateToDo = e.target.previousSibling.previousSibling.innerText
-  console.log(updateToDo)
-  let formData = new FormData();
-  formData.append("_id", deleteToDoVal);
-  formData.append("todo_change", updateToDo);
+  let updateToDo = e.target.previousSibling.previousSibling.innerText;
+  const current_todo = updateToDo;
 
-  fetch("/updateToDo", { method: "DELETE", body: formData })
-    .then((res) => res.json())
-    .then(() => {
-      // location.reload();
-    });
+  updateInput.classList.add("show");
+  toDoInput.classList.add("close");
+
+  updateInput.focus();
+  updateInput.value = updateToDo;
+
+  updateInput.addEventListener("keydown", (e) => {
+    if (e.keyCode === 13) {
+      let formData = new FormData();
+      formData.append("current_todo", current_todo);
+      formData.append("todo_change", updateInput.value);
+
+      fetch("/updateToDo", { method: "POST", body: formData })
+        .then((res) => res.json())
+        .then(() => {
+          location.reload();
+        });
+    }
+  });
 };
 
 // 스크립트 실행시 투두 프린트
