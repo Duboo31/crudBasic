@@ -107,7 +107,7 @@ const updateToDo = (e) => {
 // 스크립트 실행시 투두 프린트
 printAllToDo();
 
-// 이벤트
+// 이벤트 실행
 toDoInput.addEventListener("keydown", (e) => {
   if (e.keyCode === 13) {
     createTodoFn();
